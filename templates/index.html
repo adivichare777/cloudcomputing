@@ -1,0 +1,57 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary</title>
+
+</head>
+
+
+{% block title %}Mag{% endblock %}
+
+{% block content %}
+<style>
+
+    th, td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    
+      table, th, td, tr {
+        border: solid 1px black;
+      }
+    </style>
+
+    <body>
+        Mudra Patel <br>
+        860645 <br>
+
+        {% if data %}
+           <table>
+           <tr>
+           {% for col in cols %}
+              <th> {{ col[3] }} &emsp;&emsp;</th>
+             
+           {% endfor %}
+           </tr>
+           {% for row in data %}
+              <tr>
+                {% for y in row %}
+                   <td> {{ y }} </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+            </table>
+            <br> <br>
+        {% endif %}
+        
+    </body>
+    
+{{ wtf.quick_form(form) }}
+
+{% endblock %}

@@ -1,0 +1,15 @@
+Flask>=1.0.0
+gunicorn==19.7.1
+prometheus-client
+livereload
+Flask-WTF
+flask-uploads
+flask-bootstrap
+flask-nav
+werkzeug==0.16.1
+pandas
+flask_wtf
+Pillow
+pypyodbc
+
+markupsafe==2.0.1

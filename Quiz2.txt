@@ -1,0 +1,216 @@
+
+Name:
+Last 4 digits ID:
+
+CSE 6331, Cloud Computing					
+
+
+Quiz Q2, Summer 2022   (c) DL, UTA, 2022
+
+
+  C&P means cut and paste only those relevant lines from your program(s) into this quiz.
+
+
+ 1.  I understand that I am on my honor during this quiz, I will not collaborate, use 
+     non-allowed sources, and I will not discuss or share this quiz with anyone for the next 
+     12 hours.
+     You MAY: use Google to search, use previous source code, 
+     YOU MAY NOT use:
+     Email, Facebook, Hangouts, IM, chats, Skype or ANY other human connection.
+
+     This is a timed test. Late tests will have points deducted for being late.
+     Very late tests will not be graded.
+
+     When you are complete, with any part, please show or send the link, raise your hand, so we may visually inspect that part.
+
+     The second part of the test, you should electronically submit, you will need to copy and paste 
+     only those lines of code to implement that part of the test, usually a few (two to eight) lines of code. 
+     Place it immediately after the question.
+
+     Submit this Quiz (renamed) with code cut and pasted, ONLY text. DO NOT submit zips, binaries, libraries,
+     or anything other than text.
+
+     When any parts(questions) are complete complete, submit this test, you may make multiple submissions.
+
+     If you have computer, or other, problems, please raise your hand immediately.
+
+     If you understand and agree, please initial here:
+     ______________M.P___
+
+ 2. Get files from this same folder.
+   
+ 3. Name your program/submission with your name and last digits of your ID.
+
+ 4. Using the cloud services provider, all functionality possible should be implemented on that provider.
+    (Of course, displaying web pages through a browser and the user interface is "local")
+    The cloud provider is MS Azure.
+
+ 5. Upload all data files (*jpg and *csv, not this quiz) to the cloud service.
+
+ 6. Please create a relational database (your choice which) from the .csv data on the cloud provider, you may do this manually 
+    or in code, it is your choice.
+  
+ 7. Please put your name and ID on each page you show for this quiz.
+
+Show and submit code, when each part is complete, raise your hand and then show us:
+
+For the following you may (if you wish) normalize all latitudes and longitudes to between 0 and 360 degrees, by adding 180 to all values.
+
+ 10. (Web page) Allow a user to give a minimum latitude and longitude value set (X1,Y1) and a maximum latitude and longitude value set (X2,Y2)
+     this creates a "bounding box" between those points. (Describes an area.)
+     Then show for all the earthquakes within that area; show the time, latitide, longitude, id, and place for each quake.
+
+@app.route('/',methods= ['GET', 'POST'])    
+def mag():  
+    form=SearchForm3()
+    lg=form.lg.data
+    lt=form.lt.data
+    lg1=form.lg1.data
+    lt1=form.lt1.data
+    if form.validate_on_submit():
+        cursor.execute("select time, latitude, longitude, id, place from earth where (longitude between " +lg+" and "+lg1+") and (latitude between "+lt+" and "+lt1+")")  
+        data=cursor.fetchall() 
+        cursor.execute("select * from INFORMATION_SCHEMA.columns where TABLE_NAME = 'earth' ")
+        cols_name=cursor.fetchall()
+        return render_template('index.html',form=form,data=data,cols=cols_name)
+    return render_template('index.html',form=form,data=None,x=None)
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary</title>
+
+</head>
+
+
+{% block title %}Mag{% endblock %}
+
+{% block content %}
+<style>
+
+    th, td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    
+      table, th, td, tr {
+        border: solid 1px black;
+      }
+    </style>
+
+    <body>
+        Mudra Patel <br>
+        860645 <br>
+
+        {% if data %}
+           <table>
+           <tr>
+           {% for col in cols %}
+              <th> {{ col[3] }} &emsp;&emsp;</th>
+             
+           {% endfor %}
+           </tr>
+           {% for row in data %}
+              <tr>
+                {% for y in row %}
+                   <td> {{ y }} </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+            </table>
+            <br> <br>
+        {% endif %}
+        
+    </body>
+    
+{{ wtf.quick_form(form) }}
+
+{% endblock %}
+
+ 11. For a value "net" (such as  "nn") and a magnitude range (for example 2.5 to 2.6), show the largest 5 magnitude quakes 
+     in that "net" within the specified magnitude range. Please show same details as previous question.
+class SearchForm2(FlaskForm):
+    mag1 = StringField(
+        'Magnitude 1:',
+        [DataRequired()]
+    )
+    mag2 = StringField(
+        'Magnitude 2:',
+        [DataRequired()]
+    )
+    n=StringField(
+        'Net:',
+        [DataRequired()])
+    submit = SubmitField('Search earthquakes with magintude range')
+
+@app.route('/magrange',methods= ['GET', 'POST'])    
+def mag2():  
+    form=SearchForm2()
+    m1=form.mag1.data
+    m2=form.mag2.data
+    n=form.n.data
+    if form.validate_on_submit():
+        cursor.execute("select top 5 time, latitude, longitude, id, place from earth where net='"+n+"' and (mag between "+m1+" and "+ m2+") order by mag desc limit 5")
+        data=cursor.fetchall()
+        cursor.execute("select * from INFORMATION_SCHEMA.columns where TABLE_NAME = 'earth' ")
+        cols_name=cursor.fetchall()
+        return render_template('index.html',form=form,data=data,cols=cols_name)
+    return render_template('index.html',form=form,data=None,cols=None)
+
+ 12. For one single given day, given in Z time, (for example 6-15) show the net value that occurs most frequently and the one that 
+     occurs least frequently (but at least once.) 
+
+class SearchForm1(FlaskForm):
+    d= StringField(
+        'Day:',
+        [DataRequired()]
+    )
+    m= StringField(
+        'Month:',
+        [DataRequired()]
+    )
+    submit = SubmitField('Show net')
+
+ 13. Allow a user to give a first net value (such as "nn") and replacement net value (such as "rl") and replace all "nn" values with "rl",
+     list the number that was replaced (how many replaced). You need to finish Question 11, before we can test this.
+@app.route('/net',methods= ['GET', 'POST'])    
+def mag3():  
+    form=SearchForm()
+    n=form.n.data
+    n1=form.n1.data
+    if form.validate_on_submit():
+        cursor.execute("UPDATE earth SET net='"+n1+"' where net='"+n+"' select @@rowcount") 
+        data=cursor.fetchall() 
+        cursor.execute("select * from INFORMATION_SCHEMA.columns where TABLE_NAME = 'earth' ")
+        cols_name=cursor.fetchall()
+        return render_template('index.html',form=form,data=data,cols=cols_name)
+    return render_template('index.html',form=form,data=None)
+
+@app.route('/d',methods= ['GET', 'POST'])    
+def mag4():  
+    form=SearchForm1()
+    d=form.d.data
+    m=form.d.data
+    if form.validate_on_submit():
+        cursor.execute("select top 1 net,count(net) as 'count' from earth where datepart(day,time)="+d+" and datepart(month,time)="+m+" group by net order by count(net) desc")  
+        data=cursor.fetchall() 
+        cursor.execute("select top 1 net,count(net) as 'count' from earth where datepart(day,time)="+d+" and datepart(month,time)="+m+" group by net order by count(net) ")  
+        data1=cursor.fetchall() 
+        cursor.execute("select * from INFORMATION_SCHEMA.columns where TABLE_NAME = 'earth' ")
+        cols_name=cursor.fetchall()
+        return render_template('index1.html',form=form,data=data,data1=data1,cols=cols_name)
+    return render_template('index1.html',form=form,data=None,data1=None,x=None)
+
+ 14. Show us, in a link, the application running and we will try it out. Only for parts 10,11,12,13
+
+
+
+ 15. When complete, return (send) this quiz
+     If you finish early, send this immediately, otherwise send between
+     the end of class and no more than 1 minute after that.
+
